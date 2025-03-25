@@ -82,17 +82,14 @@
         const card = document.createElement('div');
         card.className = 'bg-white p-6 shadow-md rounded-lg border border-gray-200';
 
-        // 제목
         const title = document.createElement('h2');
         title.className = 'text-xl font-semibold text-blue-600 mb-4';
         title.textContent = item.title || '제목 없음';
         card.appendChild(title);
 
-        // 항목들 (url + 나머지)
         const infoGrid = document.createElement('div');
-        infoGrid.className = 'grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4';
+        infoGrid.className = 'grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6';
 
-        // URL은 항상 전체 가로 차지
         const urlRow = document.createElement('div');
         urlRow.className = 'col-span-full flex flex-col';
 
@@ -110,7 +107,6 @@
         urlRow.appendChild(urlValue);
         infoGrid.appendChild(urlRow);
 
-        // 그 외 항목들 (title, url, description 제외)
         Object.keys(labels).forEach(key => {
           if (['title', 'url', 'description'].includes(key)) return;
 
@@ -135,12 +131,10 @@
 
         card.appendChild(infoGrid);
 
-        // 구분선
         const divider = document.createElement('hr');
         divider.className = 'my-4 border-gray-300';
         card.appendChild(divider);
 
-        // 상세설명
         const descLabel = document.createElement('div');
         descLabel.className = 'text-sm font-medium text-gray-600 mb-1';
         descLabel.textContent = labels['description'];
