@@ -23,28 +23,32 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlZXN4a3RyYmF6cGZkaHJ4b2FmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MDY5NzYsImV4cCI6MjA1ODM4Mjk3Nn0.yyWASLW_h5UrdzGJha5exEtGx4iK6xAqXNSXIbR73QY'
     );
 
-    // 로그인 후 돌아왔을 때 승인 여부 확인
-    const { data: { user } } = await sb.auth.getUser();
+    // 현재 주소에 access_token 등 OAuth 인증이 끝났는지 확인
+    const hash = window.location.hash;
+    const url = new URL(window.location.href);
+    const isRedirectedFromLogin = hash.includes('access_token');
 
-    if (user) {
-      const email = user.email;
+    if (isRedirectedFromLogin) {
+      const { data: { user } } = await sb.auth.getUser();
 
-      const { data: approved } = await sb
-        .from('approved_users')
-        .select('*')
-        .eq('email', email)
-        .eq('approved', true)
-        .maybeSingle();
+      if (user) {
+        const { data: approved } = await sb
+          .from('approved_users')
+          .select('*')
+          .eq('email', user.email)
+          .eq('approved', true)
+          .maybeSingle();
 
-      if (approved) {
-        window.location.href = 'itemlist.html';
-      } else {
-        await sb.auth.signOut();
-        alert("승인되지 않은 사용자입니다.");
+        if (approved) {
+          window.location.href = 'itemlist.html';
+        } else {
+          await sb.auth.signOut();
+          alert("승인되지 않은 사용자입니다.");
+          window.location.href = 'main.html';
+        }
       }
     }
 
-    // 로그인 버튼 클릭 시
     document.getElementById('google-login').addEventListener('click', async () => {
       try {
         const { error } = await sb.auth.signInWithOAuth({
