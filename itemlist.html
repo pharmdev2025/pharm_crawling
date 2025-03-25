@@ -56,6 +56,7 @@
       const labels = {
         url: '주소',
         title: '제목',
+        ad_date: '업로드 날짜',
         source: '출처',
         location: '위치',
         commercial_area: '상권',
@@ -67,7 +68,6 @@
         maintenance_fee: '관리비',
         monthly_prescription: '월조제료',
         daily_sales: '일매',
-        ad_date: '업로드 날짜',
         agency_name: '업체명',
         representative: '대표명',
         tel1: '번호 1',
@@ -107,9 +107,26 @@
         urlRow.appendChild(urlValue);
         infoGrid.appendChild(urlRow);
 
-        Object.keys(labels).forEach(key => {
-          if (['title', 'url', 'description'].includes(key)) return;
+        const orderedKeys = [
+          'ad_date',
+          'source',
+          'location',
+          'commercial_area',
+          'deal_type',
+          'deposit',
+          'monthly_rent',
+          'area_exclusive',
+          'area_supply',
+          'maintenance_fee',
+          'monthly_prescription',
+          'daily_sales',
+          'agency_name',
+          'representative',
+          'tel1',
+          'tel2'
+        ];
 
+        orderedKeys.forEach(key => {
           const value = item[key] ?? '';
           const label = labels[key];
 
