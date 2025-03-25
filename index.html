@@ -1,1 +1,38 @@
-<!DOCTYPE html><html><body>Hello</body></html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>로그인 - 약국 매물 정보</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md text-center">
+    <h2 class="text-2xl font-bold mb-6">Google로 로그인</h2>
+    <button id="google-login" class="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">
+      <strong>Google 계정으로 로그인</strong>
+    </button>
+    <p id="error-message" class="text-red-500 mt-4 text-sm"></p>
+  </div>
+
+  <script>
+    const supabase = supabase.createClient(
+      'https://seesxktrbazpfdhrxoaf.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlZXN4a3RyYmF6cGZkaHJ4b2FmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MDY5NzYsImV4cCI6MjA1ODM4Mjk3Nn0.yyWASLW_h5UrdzGJha5exEtGx4iK6xAqXNSXIbR73QY'
+    );
+
+    document.getElementById('google-login').addEventListener('click', async () => {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: location.origin + '/itemlist.html'
+        }
+      });
+      if (error) {
+        document.getElementById('error-message').textContent = 'Google 로그인 실패: ' + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
