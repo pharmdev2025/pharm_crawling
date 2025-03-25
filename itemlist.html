@@ -82,17 +82,37 @@
         const card = document.createElement('div');
         card.className = 'bg-white p-6 shadow-md rounded-lg border border-gray-200';
 
-        // 제목 표시
+        // 제목
         const title = document.createElement('h2');
         title.className = 'text-xl font-semibold text-blue-600 mb-4';
         title.textContent = item.title || '제목 없음';
         card.appendChild(title);
 
+        // 항목들 (url + 나머지)
         const infoGrid = document.createElement('div');
-        infoGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4';
+        infoGrid.className = 'grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4';
 
+        // URL은 항상 전체 가로 차지
+        const urlRow = document.createElement('div');
+        urlRow.className = 'col-span-full flex flex-col';
+
+        const urlLabel = document.createElement('span');
+        urlLabel.className = 'text-xs text-gray-500';
+        urlLabel.textContent = labels.url;
+
+        const urlValue = document.createElement('span');
+        urlValue.className = 'text-sm text-blue-600 break-all underline';
+        urlValue.innerHTML = item.url
+          ? `<a href="${item.url}" target="_blank">${item.url}</a>`
+          : '';
+
+        urlRow.appendChild(urlLabel);
+        urlRow.appendChild(urlValue);
+        infoGrid.appendChild(urlRow);
+
+        // 그 외 항목들 (title, url, description 제외)
         Object.keys(labels).forEach(key => {
-          if (key === 'title' || key === 'description') return;
+          if (['title', 'url', 'description'].includes(key)) return;
 
           const value = item[key] ?? '';
           const label = labels[key];
@@ -106,9 +126,7 @@
 
           const valueEl = document.createElement('span');
           valueEl.className = 'text-sm text-gray-800 break-words';
-          valueEl.innerHTML = key === 'url' && value
-            ? `<a href="${value}" class="text-blue-500 underline" target="_blank">${value}</a>`
-            : value;
+          valueEl.textContent = value;
 
           row.appendChild(labelEl);
           row.appendChild(valueEl);
