@@ -9,7 +9,7 @@
 <body class="bg-gray-100 min-h-screen p-6">
   <div class="container mx-auto">
     <h1 class="text-3xl font-bold text-center text-blue-700 mb-8">약국 매물 정보</h1>
-    <div id="table-container" class="overflow-auto bg-white shadow-lg rounded-lg p-4"></div>
+    <div id="cards-container" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3"></div>
   </div>
 
   <script type="module">
@@ -41,66 +41,82 @@
       }
     }
 
-    const { data, error: fetchError } = await sb
+    const { data, error } = await sb
       .from('pharm_crawling_results')
       .select('*');
 
-    if (fetchError) {
-      document.getElementById('table-container').innerHTML =
+    if (error) {
+      document.getElementById('cards-container').innerHTML =
         '<p class="text-red-500">데이터를 불러오는 중 오류 발생</p>';
     } else {
-      renderTable(data);
+      renderCards(data);
     }
 
-    function renderTable(items) {
-      const headersMap = {
-        'url': '주소',
-        'title': '제목',
-        'source': '출처',
-        'location': '위치',
-        'commercial_area': '상권',
-        'deal_type': '거래유형',
-        'deposit': '보증금',
-        'monthly_rent': '월세',
-        'area_exclusive': '전용면적',
-        'area_supply': '공급면적',
-        'maintenance_fee': '관리비',
-        'monthly_prescription': '월조제료',
-        'daily_sales': '일매',
-        'ad_date': '업로드 날짜',
-        'agency_name': '업체명',
-        'representative': '대표명',
-        'tel1': '번호 1',
-        'tel2': '번호 2',
-        'description': '상세설명'
+    function renderCards(items) {
+      const labels = {
+        url: '주소',
+        title: '제목',
+        source: '출처',
+        location: '위치',
+        commercial_area: '상권',
+        deal_type: '거래유형',
+        deposit: '보증금',
+        monthly_rent: '월세',
+        area_exclusive: '전용면적',
+        area_supply: '공급면적',
+        maintenance_fee: '관리비',
+        monthly_prescription: '월조제료',
+        daily_sales: '일매',
+        ad_date: '업로드 날짜',
+        agency_name: '업체명',
+        representative: '대표명',
+        tel1: '번호 1',
+        tel2: '번호 2',
+        description: '상세설명'
       };
 
-      const headers = Object.keys(headersMap);
+      const container = document.getElementById('cards-container');
+      container.innerHTML = '';
 
-      const table = document.createElement('table');
-      table.className = 'min-w-full text-sm border border-gray-300 table-auto';
-
-      const thead = document.createElement('thead');
-      thead.innerHTML = `
-        <tr class="bg-blue-100 text-gray-800 text-xs font-semibold uppercase">
-          ${headers.map(key => `<th class="p-3 border text-left">${headersMap[key]}</th>`).join('')}
-        </tr>
-      `;
-      table.appendChild(thead);
-
-      const tbody = document.createElement('tbody');
       items.forEach(item => {
-        const row = document.createElement('tr');
-        row.className = 'hover:bg-gray-50 even:bg-gray-100';
-        row.innerHTML = headers.map(key => `
-          <td class="p-3 border text-gray-700 whitespace-pre-wrap break-words">
-            ${item[key] ?? ''}
-          </td>`).join('');
-        tbody.appendChild(row);
-      });
-      table.appendChild(tbody);
+        const card = document.createElement('div');
+        card.className = 'bg-white p-4 shadow-md rounded-lg border border-gray-200';
 
-      document.getElementById('table-container').appendChild(table);
+        const title = document.createElement('h2');
+        title.className = 'text-lg font-bold text-blue-600 mb-2';
+        title.textContent = item.title || '제목 없음';
+        card.appendChild(title);
+
+        const infoGrid = document.createElement('div');
+        infoGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
+
+        Object.keys(labels).forEach(key => {
+          if (key === 'title') return; // 이미 위에서 출력
+
+          const value = item[key] ?? '';
+          const label = labels[key];
+
+          const row = document.createElement('div');
+          row.className = 'flex flex-col mb-1';
+
+          const labelEl = document.createElement('span');
+          labelEl.className = 'text-xs text-gray-500';
+          labelEl.textContent = label;
+
+          const valueEl = document.createElement('span');
+          valueEl.className = 'text-sm text-gray-800 break-words';
+          valueEl.innerHTML = key === 'url' && value
+            ? `<a href="${value}" class="text-blue-500 underline" target="_blank">${value}</a>`
+            : value;
+
+          row.appendChild(labelEl);
+          row.appendChild(valueEl);
+          infoGrid.appendChild(row);
+        });
+
+        card.appendChild(infoGrid);
+        container.appendChild(card);
+      });
     }
   </script>
 </body>
